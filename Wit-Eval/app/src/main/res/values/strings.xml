@@ -4,5 +4,15 @@
     <string name="app_name">Wit-Eval</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="initial">The spoken text will show up here</string>
+    <string name="initial2">The semantic results will show up here</string>
+    <string name="initial3">Not set yet!!!</string>
+
+    <string name="status">Status will show up here</string>
+
+    <string name="done">Done!</string>
+    <string name="witting">Witting...</string>
+    <string name="processing">Processing...</string>
+    <string name="listening">Listening</string>
 
 </resources>

@@ -24,21 +24,45 @@
         android:textStyle="italic"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="120dp"
+        android:layout_marginTop="130dp"
         android:background="#e4e4e4"
-        android:text="The spoken text will show up here"
+        android:text="@string/status"
         />
 
     <TextView
+        android:id="@+id/requestResult"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textStyle="italic"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="620dp"
+        android:background="#e4e4e4"
+        android:text="@string/initial3"
+        />
+
+    <TextView
+        android:id="@+id/txtResult"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="170dp"
+        android:background="#e4e4e4"
+        android:text="@string/initial"
+
+        />
+
+    <TextView
+        android:id="@+id/jsonView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="220dp"
-        android:text="The semantic results will show up here"
+        android:text="@string/initial2"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:id="@+id/jsonView"
         android:background="#e4e4e4"
         android:maxLines = "100"
         android:scrollbars = "vertical"
         />
+
+
 
 </RelativeLayout>

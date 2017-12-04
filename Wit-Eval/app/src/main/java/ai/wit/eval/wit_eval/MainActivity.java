@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,30 +14,43 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParser;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
 import ai.wit.sdk.IWitListener;
-import ai.wit.sdk.Wit;
+//import ai.wit.sdk.Wit;
+import ai.wit.sdk.Wit_local;
 import ai.wit.sdk.model.WitOutcome;
 
 
 public class MainActivity extends ActionBarActivity implements IWitListener {
 
-    Wit _wit;
+    Wit_local _wit;
+    private TextView requestResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        String accessToken = "YOUR CLIENT ACCESS TOKEN HERE";
-        _wit = new Wit(accessToken, this);
-        _wit.enableContextLocation(getApplicationContext());
 
+        Token token = new Token();
+        String accessToken = token.getWIT_TOKEN();
+        _wit = new Wit_local(accessToken, this);
+        _wit.enableContextLocation(getApplicationContext());
+        //String jsonoutput = "{ \"_text\" : \"turn on the red light\", \"outcomes\" : [ { \"confidence\" : 1, \"intent\" : \"bulb_turnon\", \"_text\" : \"turn on the red light\", \"entities\" : { \"color\" : [ { \"confidence\" : 0.98760171345235, \"value\" : \"red\", \"type\" : \"value\" } ] } } ], \"WARNING\" : \"DEPRECATED\", \"msg_id\" : \"0byrbFLxvEqTkoSTK\" }";
+        //startAsync(jsonoutput);
     }
 
-
+    private void startAsync(String str) {
+        HttpRequest testTask = new HttpRequest(this);
+        // executeを呼んでAsyncTaskを実行する、パラメータは１番目
+        testTask.execute(str);
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -66,6 +80,7 @@ public class MainActivity extends ActionBarActivity implements IWitListener {
 
     @Override
     public void witDidGraspIntent(ArrayList<WitOutcome> witOutcomes, String messageId, Error error) {
+        Log.d("Debugging", "Finish processing @ witDidGraspIntent");
         TextView jsonView = (TextView) findViewById(R.id.jsonView);
         jsonView.setMovementMethod(new ScrollingMovementMethod());
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -76,22 +91,42 @@ public class MainActivity extends ActionBarActivity implements IWitListener {
         }
         String jsonOutput = gson.toJson(witOutcomes);
         jsonView.setText(jsonOutput);
-        ((TextView) findViewById(R.id.txtText)).setText("Done!");
+
+        Log.d("Debugging", witOutcomes.get(0).get_text());
+        for (WitOutcome outcome : witOutcomes) {
+            Log.d("Debugging", outcome.get_text());
+        }
+        String text = witOutcomes.get(0).get_text();
+        ((TextView) findViewById(R.id.txtResult)).setText(text);
+
+        //Log.d(witOutcomes.toString(), "Debugging");
+        //Log.d(error.toString(), "Debugging");
+        //Log.d(messageId, "Debugging");
+        //Log.i("HOGEHOGEHOGEHOGEHOGEHOGEHOGE", "Testing out my logging.");
+
+
+        startAsync(jsonOutput);
+        ((TextView) findViewById(R.id.txtText)).setText(R.string.done);
+
     }
 
     @Override
     public void witDidStartListening() {
-        ((TextView) findViewById(R.id.txtText)).setText("Witting...");
+        Log.d("Debugging", "Wit Start Listening @ witDidStartListening (i.e. witting)");
+        //Log.d("Debugging", "intent: "_wit. ;
+        ((TextView) findViewById(R.id.txtText)).setText(R.string.witting);
     }
 
     @Override
     public void witDidStopListening() {
-        ((TextView) findViewById(R.id.txtText)).setText("Processing...");
+        Log.d("Debugging", "Wit Stop Listening @ witDidStopListening");
+        ((TextView) findViewById(R.id.txtText)).setText(R.string.processing);
     }
 
     @Override
     public void witActivityDetectorStarted() {
-        ((TextView) findViewById(R.id.txtText)).setText("Listening");
+        Log.d("Debugging", "Set to listening... @ witActivityDetectorStarted");
+        ((TextView) findViewById(R.id.txtText)).setText(R.string.listening);
     }
 
     @Override
@@ -108,4 +143,16 @@ public class MainActivity extends ActionBarActivity implements IWitListener {
         }
     }
 
+    void setTextView(String str) {
+        Log.d("Status", "I'm Alive!!!!!!!!!!!" + str);
+        try {
+            Log.i("MainActivity.setTextView()", str);
+            ((TextView) findViewById(R.id.requestResult)).setText(str);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            Log.e("ERROR!!", "Something happened");
+            ((TextView) findViewById(R.id.requestResult)).setText("Error!!");
+
+        }
+    }
 }
